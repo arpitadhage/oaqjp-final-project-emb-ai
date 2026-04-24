@@ -1,11 +1,9 @@
 import requests
 
-def emotion_detector(text_to_analyse):
-    if text_to_analyse is None or text_to_analyse.strip() == "":
-        return {"error": "Invalid text! Please try again!"}
 
+def emotion_detector(text_to_analyse):
     url = "https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict"
-    
+
     headers = {
         "grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"
     }
@@ -29,9 +27,15 @@ def emotion_detector(text_to_analyse):
             "joy": emotions["joy"],
             "sadness": emotions["sadness"]
         }
-    
+
     elif response.status_code == 400:
-        return {"error": "Invalid input! Please check your text."}
-    
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None
+        }
+
     else:
-        return {"error": "Unable to fetch emotion"}
+        return None

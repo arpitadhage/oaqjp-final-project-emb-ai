@@ -1,34 +1,35 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from EmotionDetection.emotion_detection import emotion_detector
 
 app = Flask(__name__)
 
-@app.route("/emotionDetector", methods=["GET"])
-def emotion_detection():
+
+@app.route("/emotionDetector")
+def emotion_detector_function():
     text_to_analyse = request.args.get('textToAnalyze')
 
     # Handle blank input
     if text_to_analyse is None or text_to_analyse.strip() == "":
-        return jsonify({"error": "Invalid text! Please try again!"}), 400
+        return "Invalid text! Please try again!"
 
-    result = emotion_detector(text_to_analyse)
+    response = emotion_detector(text_to_analyse)
 
-    # Handle error from function
-    if "error" in result:
-        return jsonify(result), 400
+    # Handle error from function (None values case)
+    if response is None or response["joy"] is None:
+        return "Invalid text! Please try again!"
 
-    dominant_emotion = max(result, key=result.get)
+    dominant_emotion = max(response, key=response.get)
 
-    response = {
-        "anger": result["anger"],
-        "disgust": result["disgust"],
-        "fear": result["fear"],
-        "joy": result["joy"],
-        "sadness": result["sadness"],
-        "dominant_emotion": dominant_emotion
-    }
+    return (
+        "For the given statement, the system response is "
+        f"'anger': {response['anger']}, "
+        f"'disgust': {response['disgust']}, "
+        f"'fear': {response['fear']}, "
+        f"'joy': {response['joy']}, "
+        f"'sadness': {response['sadness']}. "
+        f"The dominant emotion is {dominant_emotion}."
+    )
 
-    return jsonify(response)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

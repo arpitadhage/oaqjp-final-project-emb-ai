@@ -1,2 +1,2 @@
-************* Module server.py
-server.py:1:0: F0001: No module named server.py (fatal)
+************* Module server
+Your code has been rated at 10.00/10
