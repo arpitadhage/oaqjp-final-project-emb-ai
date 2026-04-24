@@ -7,10 +7,15 @@ app = Flask(__name__)
 def emotion_detection():
     text_to_analyse = request.args.get('textToAnalyze')
 
+    # Handle blank input
     if text_to_analyse is None or text_to_analyse.strip() == "":
-        return jsonify({"error": "Invalid text! Please try again!"})
+        return jsonify({"error": "Invalid text! Please try again!"}), 400
 
     result = emotion_detector(text_to_analyse)
+
+    # Handle error from function
+    if "error" in result:
+        return jsonify(result), 400
 
     dominant_emotion = max(result, key=result.get)
 
